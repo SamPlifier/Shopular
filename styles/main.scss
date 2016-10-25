@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+    margin: 5% auto;
+    padding: 0;
+}
+
+h1.ng-binding {
+    text-align: center;
+}
+
+main {
+    width: 80%;
+}
+
+table,
+td,
+th {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+td,
+th {
+    height: 24px;
+}
+
+td img {
+    float: right;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.number {
+    text-align: right;
+}
