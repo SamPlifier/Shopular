@@ -44,3 +44,26 @@ table tr:nth-child(even) {
 .number {
     text-align: right;
 }
+
+form.addItemBox {
+    width: 60%;
+    align-items: center;
+    margin: 0 auto;
+}
+
+input[type=text],
+label {
+    display: inline-block;
+}
+
+label {
+    width: 2em;
+}
+
+form.ng-invalid-required {
+    border: none;
+}
+
+.ng-invalid-required {
+    border: 2px solid red;
+}

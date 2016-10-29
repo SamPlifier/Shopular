@@ -1,34 +1,52 @@
 <!doctype html>
 <html ng-app='shopular'>
-  <head>
-    <link rel='stylesheet' type='text/css' href='/styles/main.css'
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-<title></title>
-  </head>
-  <body ng-controller='ShopController as shop'>
+
+<head>
+    <link rel='stylesheet' type='text/css' href='/styles/main.css' <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <title></title>
+</head>
+
+<body ng-controller='ShopController as shop'>
     <header>
-      <h1>{{shop.title}}</h1>
+        <h1>{{shop.title}}</h1>
     </header>
     <main>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>price</th>
-          <th>quantity</th>
-          <th>color</th>
-          <th>total</th>
-        </tr>
-        <tr ng-repeat="item in shop.items">
-          <td>{{item.name}}<img ng-show="item.hasDiscount === true" src="styles/sale.png"></td>
-          <td class="number">{{item.price}}</td>
-          <td class="number">{{item.quantity}}</td>
-          <td>{{item.color}}</td>
-          <td class="number">{{item.total}}</td>
-        </tr>
-      </table>
+        <form novalidate name="addItem" class="addItemBox addNewItem" ng-submit="shop.addItem()" ng-disabled="shop.addItem.$invalid">
+            <h3>Add new item</h3>
+            <label>name</label>
+            <input type="text" name="newName" ng-model="shop.newName" placeholder="name" required></input>
+            <label>price</label>
+            <input type="number" min="0" ng-model="shop.newPrice" required placeholder="price"></input>
+            <label>quantity</label>
+            <input type="number" ng-model="shop.newQuantity" required placeholder="quantity"></input>
+            <label>color</label>
+            <input type="text" ng-model="shop.newColor" placeholder="color"></input>
+            <label>total</label>
+            <input type="number" ng-model="shop.newDiscount" placeholder="discount"></input>
+            <input ng-disabled="addItem.$invalid" class="submit" type="submit" value="submit"></input>
+        </form>
+        <table>
+            <tr>
+                <th ng-click="sortType = 'name'; sortReverse = !sortReverse">name</th>
+                <th ng-click="sortType = 'price'; sortReverse = !sortReverse">price</th>
+                <th ng-click="sortType = 'quantity'; sortReverse = !sortReverse">quantity</th>
+                <th>color</th>
+                <th>total</th>
+            </tr>
+            <!-- ng-click="sortType = ''; sortReverse = !sortReverse" -->
+            <tr ng-repeat="item in shop.items | orderBy:sortType:!sortReverse">
+                <td>{{item.name}}<img ng-show="item.hasDiscount === true" src="styles/sale.png"></td>
+                <td class="number">{{item.price | currency}}</td>
+                <td class="number">{{item.quantity}}</td>
+                <td>{{item.color}}</td>
+                <td class="number">{{item.total | currency}}</td>
+            </tr>
+        </table>
     </main>
     <footer></footer>
     <script src='js/main.js'></script>
-  </body>
+</body>
+
 </html>
