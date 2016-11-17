@@ -2,15 +2,26 @@
 <html ng-app='shopular'>
 
 <head>
-    <link rel='stylesheet' type='text/css' href='/styles/main.css' <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+    <link rel='stylesheet' type='text/css' href='/styles/main.css'>
+     <script src="https://code.jquery.com/jquery-3.1.1.min.js">
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-    <title></title>
+      <script src="/node_modules/angular-local-storage/dist/angular-local-storage.js"></script>
+    <title>Shopular</title>
 </head>
 
 <body ng-controller='ShopController as shop'>
     <header>
         <h1>{{shop.title}}</h1>
+        <div class="userDiv" ng-controller="UserController as user">
+          <div ng-if="user.showLogin">
+            <label for="userName">User name:</label><input id="userName" type="text" ng-model="user.userName" />
+            <button ng-click="user.login()">Login</button>
+          </div>
+          <div ng-if="!user.showLogin">
+            {{user.userName}} - {{user.loginTime}}
+          </div>
+        </div>
     </header>
     <main>
         <form novalidate name="addItem" class="addItemBox addNewItem" ng-submit="shop.addItem()" ng-disabled="shop.addItem.$invalid">

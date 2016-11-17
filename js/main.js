@@ -1,21 +1,73 @@
 (function() {
     'use strict';
-
     angular
+    // local storage dependency added to the module
         .module('shopular', [])
-        .controller('ShopController', function($scope) {
+        .factory('localStorageModule', function() {
+            var localStorageModule = {};
+                // get
+                localStorageModule.get = function() {
+                  var allItems = localStorage.getItem('shopItems');
+                    return (allItems !== null) ? JSON.parse(allItems) : [];
+                };
+                // save new
+                localStorageModule.saveNew = function(item) {
+                    var items = localStorageModule.get();
+                    items.unshift(item);
+                    localStorage.setItem('shopItems', JSON.stringify(items));
+                };
+                // update
+                localStorageModule.update = function(item) {
+                    // retrieve list of items
+                    var items = localStorageModule.get();
+                    // loop through
+                    for (i = 0; i < items.length; i++) {
+                        // find correct item by id and update collection
+                        if (items[i].id == item.id) {
+                            items[i] = item;
+                            break;
+                        }
+                    }
+                    // updating local storage collection
+                    localStorage.setItem('shopItems', JSON.stringify(items));
+                };
+                localStorageModule.getNextId = function() {
+                    var currentId = localStorage.currentId || 99999;
+                    currentId += 1;
+                    localStorage.currentId = currentId;
+                    return currentId;
+                };
+            return localStorageModule;
+        })
+        // .service('userService', function($scope){
+        //
+        // })
+        .controller('UserController', function($scope){
+          var user = this;
+          user.showLogin = true;
+          user.userName = "";
+          user.loginTime = null;
+          user.login = function() {
+            var newTime = new Date();
+            user.loginTime = newTime.toLocaleDateString() + " " + newTime.toLocaleTimeString();
+            user.showLogin = false;
+          };
+        })
+        .controller('ShopController', function($scope, localStorageModule) {
             var shop = this;
             $scope.sortType = '-price'; // set the default sort type
             $scope.sortReverse = false; // set the default sort order
             shop.addItem = function() {
                 var addNewItem = {
+                    "id": localStorageModule.getNextId(),
                     "name": this.newName,
                     "price": this.newPrice,
                     "quantity": this.newQuantity,
                     "color": this.newColor,
-                    "total": this.newDiscount
+                    "discount": this.newDiscount
                 };
                 items.unshift(addNewItem);
+                localStorageModule.saveNew(addNewItem);
                 this.sortType = 'name';
                 this.sortType = 'price';
                 this.sortType = 'quantity';
@@ -109,24 +161,35 @@
                 "color": "black",
                 "discount": 12
             }];
+            shop.formatItem = function(item) {
+                var total = item.quantity * (item.price - item.discount);
+                var tax = total * shop.tax;
+                total = total - tax;
+                var newItem = {
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    color: item.color,
+                    total: total.toFixed(2),
+                    hasDiscount: (item.discount > 0)
+                };
+                return newItem;
+            };
             var items = [];
             if (shop.data && shop.data.length > 0) {
                 for (var i = 0; i < shop.data.length; i++) {
-                    var item = shop.data[i];
-                    var total = item.quantity * (item.price - item.discount);
-                    var tax = total * shop.tax;
-                    total = total - tax;
-                    var newitem = {
-                        name: item.name,
-                        price: item.price,
-                        quantity: item.quantity,
-                        color: item.color,
-                        total: total.toFixed(2),
-                        hasDiscount: (item.discount > 0)
-                    };
-                    items.push(newitem);
+                    var newItem = shop.formatItem(shop.data[i]);
+                    items.push(newItem);
+                }
+            }
+            var storedItems = localStorageModule.get();
+            if (storedItems && storedItems.length > 0) {
+                for (var j = 0; j < storedItems.length; j++) {
+                    var newStoredItem = shop.formatItem(storedItems[j]);
+                    items.push(newStoredItem);
                 }
             }
             shop.items = items;
         });
+
 })();
